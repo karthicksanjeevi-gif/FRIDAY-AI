@@ -1,0 +1,7 @@
+{
+  "name": "Friday",
+  "description": "A robust, real-time conversational AI interface using the Gemini API. Features streaming responses, markdown rendering, and smooth animations.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
