@@ -53,7 +53,7 @@ const VoiceAgentOverlay: React.FC<VoiceAgentOverlayProps> = ({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex flex-col justify-between p-6 md:p-12 overflow-hidden bg-slate-950/95 backdrop-blur-2xl text-white font-sans selection:bg-indigo-500/30"
+        className="fixed inset-0 z-50 flex flex-col justify-between p-6 md:p-12 overflow-y-auto bg-slate-950/95 backdrop-blur-2xl text-white font-sans selection:bg-indigo-500/30"
       >
         {/* Futuristic Background Gradients */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
@@ -84,7 +84,7 @@ const VoiceAgentOverlay: React.FC<VoiceAgentOverlayProps> = ({
         </div>
 
         {/* Top Header Bar */}
-        <header className="relative z-10 flex items-center justify-between w-full">
+        <header className="relative z-10 flex items-center justify-between w-full flex-shrink-0">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/60 border border-slate-800/80 backdrop-blur-md">
               <span className="relative flex h-2.5 w-2.5">
@@ -207,8 +207,8 @@ const VoiceAgentOverlay: React.FC<VoiceAgentOverlayProps> = ({
         </main>
 
         {/* Real-time speech transcription container */}
-        <section className="relative z-10 max-w-2xl mx-auto w-full mb-8">
-          <div className="flex flex-col gap-4 p-5 rounded-2xl bg-slate-900/40 border border-slate-800/50 backdrop-blur-xl shadow-2xl">
+        <section className="relative z-10 max-w-2xl mx-auto w-full mb-8 flex-shrink-0">
+          <div className="flex flex-col gap-4 p-5 rounded-2xl bg-slate-900/40 border border-slate-800/50 backdrop-blur-xl shadow-2xl overflow-y-auto max-h-[160px] md:max-h-[220px]">
             {/* User Speech Bubble */}
             <div className="flex flex-col gap-1 min-h-[45px]">
               <span className="text-[10px] uppercase font-bold tracking-widest text-slate-500 font-mono">You</span>
@@ -231,7 +231,7 @@ const VoiceAgentOverlay: React.FC<VoiceAgentOverlayProps> = ({
         </section>
 
         {/* Bottom Control Bar & Soundwave indicators */}
-        <footer className="relative z-10 flex items-center justify-between max-w-4xl mx-auto w-full px-6">
+        <footer className="relative z-10 flex items-center justify-between max-w-4xl mx-auto w-full px-6 flex-shrink-0">
           {/* Left Soundwave Indicator */}
           <div className="hidden sm:flex items-center gap-1 h-12 w-28 justify-start">
             {[...Array(6)].map((_, i) => (

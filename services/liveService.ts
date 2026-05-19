@@ -89,6 +89,9 @@ export class LiveService {
             speechConfig: {
                 voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Zephyr' } }
             },
+            systemInstruction: {
+              parts: [{ text: "You are Friday, a helpful AI assistant. You must communicate exclusively in English. Understand all user speech inputs as English, perform speech-to-text transcriptions in English only, and speak your responses in English only. Never transcribe or translate user speech into other languages (e.g. Hindi/Devanagari)." }]
+            },
             // Enable Transcription
             inputAudioTranscription: {},
             outputAudioTranscription: {},
