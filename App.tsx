@@ -42,6 +42,16 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLiveActive, setIsLiveActive] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isSpeakerOn, setIsSpeakerOn] = useState(true);
+
+  useEffect(() => {
+    liveService.setMuted(isMuted);
+  }, [isMuted]);
+
+  useEffect(() => {
+    liveService.setSpeaker(isSpeakerOn);
+  }, [isSpeakerOn]);
   
   // Sidebar & Auth State
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -97,6 +107,8 @@ const App: React.FC = () => {
     } else {
       setError(null); // Clear previous errors
       try {
+        setIsMuted(false);
+        setIsSpeakerOn(true);
         await liveService.connect(
           (active) => setIsLiveActive(active),
           (err) => {
@@ -340,6 +352,10 @@ const App: React.FC = () => {
           isLoading={isLoading}
           isDarkMode={isDarkMode}
           toggleLive={toggleLive}
+          isMuted={isMuted}
+          setIsMuted={setIsMuted}
+          isSpeakerOn={isSpeakerOn}
+          setIsSpeakerOn={setIsSpeakerOn}
         />
       )}
     </div>

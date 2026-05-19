@@ -8,16 +8,22 @@ interface VoiceAgentOverlayProps {
   isLoading: boolean;
   isDarkMode: boolean;
   toggleLive: () => void;
+  isMuted: boolean;
+  setIsMuted: (muted: boolean) => void;
+  isSpeakerOn: boolean;
+  setIsSpeakerOn: (on: boolean) => void;
 }
 
 const VoiceAgentOverlay: React.FC<VoiceAgentOverlayProps> = ({
   messages,
   isLoading,
   isDarkMode,
-  toggleLive
+  toggleLive,
+  isMuted,
+  setIsMuted,
+  isSpeakerOn,
+  setIsSpeakerOn
 }) => {
-  const [isMuted, setIsMuted] = useState(false);
-  const [isSpeakerOn, setIsSpeakerOn] = useState(true);
 
   // Deriving the voice agent state
   const lastMsg = messages[messages.length - 1];

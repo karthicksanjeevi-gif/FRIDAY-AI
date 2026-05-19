@@ -11,8 +11,21 @@ export class LiveService {
   private sources: Set<AudioBufferSourceNode> = new Set();
   
   public isActive: boolean = false;
+  public isMuted: boolean = false;
+  public isSpeakerOn: boolean = true;
 
   constructor() {}
+
+  public setMuted(muted: boolean) {
+    this.isMuted = muted;
+  }
+
+  public setSpeaker(on: boolean) {
+    this.isSpeakerOn = on;
+    if (this.outputNode && this.outputAudioContext) {
+      this.outputNode.gain.setValueAtTime(on ? 1.0 : 0.0, this.outputAudioContext.currentTime);
+    }
+  }
 
   async connect(
       onActiveChange: (active: boolean) => void, 
@@ -63,6 +76,7 @@ export class LiveService {
       }
       
       this.outputNode = this.outputAudioContext.createGain();
+      this.outputNode.gain.setValueAtTime(this.isSpeakerOn ? 1.0 : 0.0, this.outputAudioContext.currentTime);
       this.outputNode.connect(this.outputAudioContext.destination);
 
       // 4. Initialize AI Client & Session
@@ -149,7 +163,7 @@ export class LiveService {
     this.scriptProcessor = this.inputAudioContext.createScriptProcessor(4096, 1, 1);
     
     this.scriptProcessor.onaudioprocess = (e) => {
-      if (!this.isActive) return;
+      if (!this.isActive || this.isMuted) return;
       
       const inputData = e.inputBuffer.getChannelData(0);
       const b64Data = this.pcmToB64(inputData);
@@ -172,14 +186,18 @@ export class LiveService {
 
   private async handleMessage(message: LiveServerMessage, onTranscription?: (text: string, isUser: boolean, isFinal: boolean) => void) {
     // 1. Handle Audio
-    const data = message.serverContent?.modelTurn?.parts?.[0]?.inlineData?.data;
-    if (data && this.outputAudioContext && this.outputNode) {
-       try {
-         const audioBuffer = await this.decodeAudioData(data);
-         this.playAudio(audioBuffer);
-       } catch (e) {
-         console.debug("Audio decode error", e);
-       }
+    const parts = message.serverContent?.modelTurn?.parts;
+    if (parts && this.outputAudioContext && this.outputNode) {
+      for (const part of parts) {
+        if (part.inlineData?.data) {
+           try {
+             const audioBuffer = await this.decodeAudioData(part.inlineData.data);
+             this.playAudio(audioBuffer);
+           } catch (e) {
+             console.debug("Audio decode error", e);
+           }
+        }
+      }
     }
 
     // 2. Handle Transcription
@@ -242,10 +260,11 @@ export class LiveService {
       bytes[i] = binaryString.charCodeAt(i);
     }
     
-    const dataInt16 = new Int16Array(bytes.buffer);
-    const buffer = this.outputAudioContext.createBuffer(1, dataInt16.length, 24000);
+    const safeLength = Math.floor(bytes.byteLength / 2);
+    const dataInt16 = new Int16Array(bytes.buffer, 0, safeLength);
+    const buffer = this.outputAudioContext.createBuffer(1, safeLength, 24000);
     const channelData = buffer.getChannelData(0);
-    for (let i = 0; i < dataInt16.length; i++) {
+    for (let i = 0; i < safeLength; i++) {
         channelData[i] = dataInt16[i] / 32768.0;
     }
     return buffer;
